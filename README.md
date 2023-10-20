@@ -16,7 +16,7 @@ You are a DevOps engineer at XYZ Ltd. Your company is working on a Java applicat
 ```shell
 ansible --version
 ```
-![alt text](.\img/ansversion.png)
+![alt text](https://github.com/fpedrazav02/AnsibleCI-CD/blob/main/img/ansversion.png)
 
 We then install it.
 
@@ -74,8 +74,33 @@ ssh-copy-id -i ansiuser@hostip
 ```
 ![Alt text](.\img/keyadd.png)
 
+Then we can finally check for the connection on our **worknodes**.
+![Alt text](.\img/pongsuccess.png)
+> We hard reseted lab. Ips may have changed.
 
+# PlayBook Creation
+First we can create a PlayBook to install all needed dependencies. Our Jenkins CI server will need.
 
-On first thought we first need to create a playbook which installs all needed dependencies. 
+- Git
+- Docker
+- Maven
 
-We will do this as a YML.
+In that case we can create a simple playbook that checks for each dependency and it's version. Then, we store the output in a variable and install the dependency if needed.
+
+**Example of checking and installing a dependency:**
+```yaml
+ - name: Check if Git is installed
+      command: git --version
+      register: git_check
+      ignore_errors: yes
+ - name: Install Git
+      package:
+        name: git
+        state: present
+      when: git_check.rc != 0
+``` 
+
+We can also go ahead and start the docker service.
+
+You can find the whole PlayBook [here](https://github.com/fpedrazav02/AnsibleCI-CD/blob/main/playbooks/Installation-pb.yml).
+
