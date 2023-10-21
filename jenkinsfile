@@ -1,0 +1,31 @@
+pipeline{
+
+    agent any
+
+    stages{
+
+    stage('Clone the playbook repo')
+    {
+    steps{
+        git branch: 'main', url: 'https://github.com/fpedrazav02/AnsibleCI-CD.git'
+    }
+    }
+    stage('Playbook to Build code')
+    {
+
+    steps{
+        ansiblePlaybook credentialsId: 'ansiblecredentials', disableHostKeyChecking: true, installation: 'myansible', inventory: 'dev.inv', playbook: 'InstallationPlayBook.yml'
+
+    }
+
+    }
+
+    stage('Playbook to deploy code')
+    {
+
+    steps{
+        ansiblePlaybook credentialsId: 'ansiblecredentials', disableHostKeyChecking: true, installation: 'myansible', inventory: 'dev.inv', playbook: 'dockerCD.yml'
+    }
+        }
+    }
+}

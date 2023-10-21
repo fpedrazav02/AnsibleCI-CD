@@ -16,7 +16,7 @@ You are a DevOps engineer at XYZ Ltd. Your company is working on a Java applicat
 ```shell
 ansible --version
 ```
-![alt text](https://github.com/fpedrazav02/AnsibleCI-CD/blob/main/img/ansversion.png)
+![alt text](.\img/ansversion.png)
 
 We then install it.
 
@@ -198,3 +198,63 @@ Firstly we check for Java and if it is install
 ```
 java -version
 ```
+Since we do not have it installed we can install it with
+```
+apt install default-jre
+```
+
+> Since we were having troubles installing jenkins. We decided to install another version on a virtual machine.
+
+![Alt text](.\img/jenkinsfail.png)
+
+Without a handshake verification is not posible to install jenkins. 
+
+We can then continue with the virtual machine one. We will need to install the needed plugins.
+
+![Alt text](.\img/p1.png)
+![Alt text](.\img/p2.png)
+
+Once installed we configure the tool.
+![Alt text](.\img/p3.png)
+
+## Create Ansible Job
+### Create a new Job
+We create a pipeline job with then next syntax:
+
+```
+pipeline{
+
+    agent any
+
+    stages{
+
+    stage('Clone the playbook repo')
+    {
+    steps{
+        git branch: 'main', url: 'https://github.com/fpedrazav02/AnsibleCI-CD.git'
+    }
+    }
+    stage('Playbook to Build code')
+    {
+
+    steps{
+        ansiblePlaybook credentialsId: 'ansiblecredentials', disableHostKeyChecking: true, installation: 'myansible', inventory: 'dev.inv', playbook: 'InstallationPlayBook.yml'
+
+    }
+
+    }
+
+    stage('Playbook to deploy code')
+    {
+
+    steps{
+        ansiblePlaybook credentialsId: 'ansiblecredentials', disableHostKeyChecking: true, installation: 'myansible', inventory: 'dev.inv', playbook: 'dockerCD.yml'
+    }
+        }
+    }
+}
+
+```
+
+Finally, we can run the Job.
+![Alt text](.\img/run.jpg)
