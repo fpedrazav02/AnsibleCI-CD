@@ -156,8 +156,8 @@ We can check as well if the files were created on the node.
 ```
 ansible -i /home/aniuser/inventory worknodes -m command -a "ls -s /tmp/code/target"
 ```
-![Alt text](.\img/ansifiles.png)
----
+![Alt text](https://github.com/fpedrazav02/AnsibleCI-CD/blob/main/img/ansifiles.png)
+
 Since we have our CI part with a PlayBook. We can create another playbook to copy the files needed and building a docker image. After it, it will deploy it.
 
 We will use the same dockerfile as last time.
