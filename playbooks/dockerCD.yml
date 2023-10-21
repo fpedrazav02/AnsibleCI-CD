@@ -1,0 +1,14 @@
+---
+- name: CI/CD PlayBook
+  hosts: worknodes
+  vars:
+  become: true
+  tasks:
+    - name: Copy War file to dockerfiles dir
+      copy: src=/tmp/code/target/addressbook.war dest=/tmp/code remote_src=yes
+    - name: Build Docker Image
+      command: chdir=/tmp/code docker build -t projectimage .
+    - name: Run Docker Image
+      command: docker run -d -P projectimage
+
+  

@@ -79,13 +79,12 @@ Then we can finally check for the connection on our **worknodes**.
 > We hard reseted lab. Ips may have changed.
 
 # PlayBook Creation
-First we can create a PlayBook to install all needed dependencies. Our Jenkins CI server will need.
+First we can create a PlayBook to install all needed dependencies and build our **War** file. We will need to install.
 
 - Git
-- Docker
 - Maven
 
-In that case we can create a simple playbook that checks for each dependency and it's version. Then, we store the output in a variable and install the dependency if needed.
+We can create a simple playbook that checks for each dependency and it's version. Then, we store the output in a variable and install the dependency if needed.
 
 **Example of checking and installing a dependency:**
 ```yaml
@@ -99,8 +98,98 @@ In that case we can create a simple playbook that checks for each dependency and
         state: present
       when: git_check.rc != 0
 ``` 
+Addiontonally, we need to add to our PlayBook. 
 
-We can also go ahead and start the docker service.
+- Ability to clone the repository
+- Build our War file with Maven
 
-You can find the whole PlayBook [here](https://github.com/fpedrazav02/AnsibleCI-CD/blob/main/playbooks/Installation-pb.yml).
+Our Java WebApp is part of ***Sonals repo***.
+You may find the full Java WebApp [here](https://github.com/Sonal0409/DevOpsCodeDemo).
+
+
+```yml
+---
+- name: Install Dependencies
+  hosts: worknodes
+  become: true
+  vars: 
+  tasks:
+    - name: Update Repository
+      command: sudo apt-update
+
+    - name: Check if Git is installed
+      command: git --version
+      register: git_check
+      ignore_errors: yes
+    - name: Check if Maven is installed
+      command: mvn --version
+      register: maven_check
+      ignore_errors: yes
+
+    - name: Install Git
+      package:
+        name: git
+        state: present
+      when: git_check.rc != 0
+
+    - name: Install Maven
+      package:
+        name: maven
+        state: present
+      when: maven_check.rc != 0
+
+    - name: Clone the repository
+      git: repo=https://github.com/Sonal0409/DevOpsCodeDemo.git dest=/tmp/code
+
+    - name: Build with Maven
+      command: chdir=/tmp/code mvn package
+```
+Before deploying it via Jenkins. We should try it.
+
+```
+ansible-playbook -i /home/aniuser/inventory InstallationPlayBook.yml
+```
+![Alt text](.\img/pbruntest.png)
+
+We can check as well if the files were created on the node.
+
+```
+ansible -i /home/aniuser/inventory worknodes -m command -a "ls -s /tmp/code/target"
+```
+![Alt text](.\img/ansifiles.png)
+---
+Since we have our CI part with a PlayBook. We can create another playbook to copy the files needed and building a docker image. After it, it will deploy it.
+
+We will use the same dockerfile as last time.
+
+```dockerfile
+FROM tomcat:9
+ADD addressbook.war /usr/local/tomcat/webapps
+CMD ["catalina.sh","run"]
+EXPOSE 8080
+```
+The PlayBook looks like this.
+
+```yml
+---
+- name: CI/CD PlayBook
+  hosts: worknodes
+  vars:
+  become: true
+  tasks:
+    - name: Start Docker Service
+      service: name=docker state=started
+    - name: Copy War file to dockerfiles dir
+      copy: src=/tmp/code/target/addressbook.war dest=/tmp/code remote_src=yes
+    - name: Build Docker Image
+      command: chdir=/tmp/code docker build -t projectimage .
+    - name: Run Docker Image
+      command: docker run -d -P projectimage
+```
+Execution functions perfectly
+![Alt text](.\img/dockerplayb.png)
+
+When checking both containers and their runnign status we see they are working.
+![Alt text](.\img/runcont.png)
+
 

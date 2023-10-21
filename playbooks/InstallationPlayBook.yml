@@ -5,7 +5,7 @@
   vars: 
   tasks:
     - name: Update Repository
-      command: sudo apt-update
+      command: sudo apt-get update
 
     - name: Check if Git is installed
       command: git --version
@@ -15,17 +15,6 @@
       command: mvn --version
       register: maven_check
       ignore_errors: yes
-    - name: Check if Docker is installed
-      command: docker --version
-      register: docker_check
-      ignore_errors: yes
-    
-    
-    - name: Install Docker
-      package:
-        name: docker-ce
-        state: present
-      when: docker_check.rc != 0
 
     - name: Install Git
       package:
@@ -38,3 +27,10 @@
         name: maven
         state: present
       when: maven_check.rc != 0
+
+    - name: Clone the repository
+      git: repo=https://github.com/Sonal0409/DevOpsCodeDemo.git dest=/tmp/code
+
+    - name: Build with Maven
+      command: chdir=/tmp/code mvn package
+    
