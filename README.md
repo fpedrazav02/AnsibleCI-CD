@@ -192,4 +192,9 @@ Execution functions perfectly
 When checking both containers and their runnign status we see they are working.
 ![Alt text](.\img/runcont.png)
 
+# Jenkins PlayBook Setup
 
+Firstly we check for Java and if it is install
+```
+java -version
+```
