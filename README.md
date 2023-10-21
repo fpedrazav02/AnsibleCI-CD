@@ -16,7 +16,7 @@ You are a DevOps engineer at XYZ Ltd. Your company is working on a Java applicat
 ```shell
 ansible --version
 ```
-![alt text](.\img/ansversion.png)
+![alt text](https://github.com/fpedrazav02/AnsibleCI-CD/blob/main/img/ansversion.png))
 
 We then install it.
 
@@ -25,15 +25,15 @@ sudo apt install ansible
 ```
 Then we check installation
 
-![alt text](.\img/ansversion2.png)
+![alt text](https://github.com/fpedrazav02/AnsibleCI-CD/blob/main/img/ansversion2.png)
 
 Then we can modify our `/etc/ansible/hosts` file in order to create a group of worknodes
 
-![alt text](.\img/hosts.png)
+![alt text](https://github.com/fpedrazav02/AnsibleCI-CD/blob/main/img/hosts.png)
 
 After configuring our inventory file we check if it is working and if we have connectivity with our worker nodes.
 
-![alt text](.\img/workerconnectcheck.png)
+![alt text](https://github.com/fpedrazav02/AnsibleCI-CD/blob/main/img/workerconnectcheck.png)
 
 > Since both failed it means we need to generate a new ssh key and we will use it through a new ansisuser. 
 
@@ -52,7 +52,7 @@ In order to connect without needing password we will need to edit sshd daemon co
 ```bash
 sudo vim /etc/ssh/sshd_config
 ```
-![Alt text](.\img/nopasswd.png)
+![Alt text](https://github.com/fpedrazav02/AnsibleCI-CD/blob/main/img/nopasswd.png)
 
 Then we restart the service
 ```
@@ -62,20 +62,20 @@ sudo service sshd restart
 ```bash
 sudo vim /etc/sudoers
 ```
-![Alt text](.\img/sudoers.png)
+![Alt text](https://github.com/fpedrazav02/AnsibleCI-CD/blob/main/img/sudoers.png)
 
 After adding it to the worker nodes we will create and copy a new ssh key from the AMC. 
-![Alt text](.\img/sshkeygen.png)
+![Alt text](https://github.com/fpedrazav02/AnsibleCI-CD/blob/main/img/sshkeygen.png)
 
 We then copy it to the worker nodes
 
 ```bash
 ssh-copy-id -i ansiuser@hostip
 ```
-![Alt text](.\img/keyadd.png)
+![Alt text](https://github.com/fpedrazav02/AnsibleCI-CD/blob/main/img/keyadd.png)
 
 Then we can finally check for the connection on our **worknodes**.
-![Alt text](.\img/pongsuccess.png)
+![Alt text](https://github.com/fpedrazav02/AnsibleCI-CD/blob/main/img/pongsuccess.png)
 > We hard reseted lab. Ips may have changed.
 
 # PlayBook Creation
@@ -149,7 +149,7 @@ Before deploying it via Jenkins. We should try it.
 ```
 ansible-playbook -i /home/aniuser/inventory InstallationPlayBook.yml
 ```
-![Alt text](.\img/pbruntest.png)
+![Alt text](https://github.com/fpedrazav02/AnsibleCI-CD/blob/main/img/pbruntest.png)
 
 We can check as well if the files were created on the node.
 
@@ -187,10 +187,10 @@ The PlayBook looks like this.
       command: docker run -d -P projectimage
 ```
 Execution functions perfectly
-![Alt text](.\img/dockerplayb.png)
+![Alt text](https://github.com/fpedrazav02/AnsibleCI-CD/blob/main/img/dockerplayb.png)
 
 When checking both containers and their runnign status we see they are working.
-![Alt text](.\img/runcont.png)
+![Alt text](https://github.com/fpedrazav02/AnsibleCI-CD/blob/main/img/runcont.png)
 
 # Jenkins PlayBook Setup
 
@@ -205,17 +205,17 @@ apt install default-jre
 
 > Since we were having troubles installing jenkins. We decided to install another version on a virtual machine.
 
-![Alt text](.\img/jenkinsfail.png)
+![Alt text](https://github.com/fpedrazav02/AnsibleCI-CD/blob/main/img/jenkinsfail.png)
 
 Without a handshake verification is not posible to install jenkins. 
 
 We can then continue with the virtual machine one. We will need to install the needed plugins.
 
-![Alt text](.\img/p1.png)
-![Alt text](.\img/p2.png)
+![Alt text](https://github.com/fpedrazav02/AnsibleCI-CD/blob/main/img/p1.png)
+![Alt text](https://github.com/fpedrazav02/AnsibleCI-CD/blob/main/img/p2.png)
 
 Once installed we configure the tool.
-![Alt text](.\img/p3.png)
+![Alt text](https://github.com/fpedrazav02/AnsibleCI-CD/blob/main/img/p3.png)
 
 ## Create Ansible Job
 ### Create a new Job
@@ -257,4 +257,4 @@ pipeline{
 ```
 
 Finally, we can run the Job.
-![Alt text](.\img/run.jpg)
+![Alt text](https://github.com/fpedrazav02/AnsibleCI-CD/blob/main/img/run.jpg)
